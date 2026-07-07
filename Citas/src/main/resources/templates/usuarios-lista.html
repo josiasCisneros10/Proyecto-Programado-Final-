@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de usuarios</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel panel-grande">
+            <h1>Gestión de usuarios</h1>
+
+            <p class="mensaje exito" th:if="${param.actualizado}">Usuario actualizado correctamente.</p>
+            <p class="mensaje exito" th:if="${param.desactivado}">Usuario desactivado correctamente.</p>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Cédula</th>
+                            <th>Correo</th>
+                            <th>Contacto</th>
+                            <th>Rol</th>
+                            <th>Activo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuario : ${usuarios}">
+                            <td th:text="${usuario.id}"></td>
+                            <td th:text="${usuario.nombre}"></td>
+                            <td th:text="${usuario.cedula}"></td>
+                            <td th:text="${usuario.correo}"></td>
+                            <td th:text="${usuario.contacto}"></td>
+                            <td th:text="${usuario.rol}"></td>
+                            <td th:text="${usuario.activo ? 'Activo' : 'Inactivo'}"></td>
+                            <td>
+                                <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}">Editar</a>
+                                <a th:if="${usuario.activo}" th:href="@{/usuarios/desactivar/{id}(id=${usuario.id})}">Desactivar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="links">
+                <a th:href="@{/inicio}">Volver al inicio</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

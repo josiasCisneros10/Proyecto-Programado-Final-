@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel panel-grande">
+            <h1>Sistema de Gestión de Citas de Hospital</h1>
+            <p class="bienvenida">Bienvenido al sistema.</p>
+
+            <nav class="menu">
+                <a th:href="@{/perfil}">Perfil</a>
+                <a th:href="@{/medicos}">Médicos</a>
+                <a th:href="@{/disponibilidades}">Disponibilidades</a>
+                <a th:href="@{/usuarios}">Usuarios</a>
+            </nav>
+
+            <form th:action="@{/logout}" method="post" class="form-salida">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

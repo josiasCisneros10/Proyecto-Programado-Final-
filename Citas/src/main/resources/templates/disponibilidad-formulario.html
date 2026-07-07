@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Disponibilidad</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel">
+            <h1 th:text="${titulo}">Disponibilidad</h1>
+
+            <p class="mensaje error" th:if="${error}" th:text="${error}"></p>
+
+            <form th:if="${disponibilidad.id == null}" th:action="@{/disponibilidades/guardar}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <label for="medicoId">Médico</label>
+                <select id="medicoId" name="medicoId" required>
+                    <option value="">Seleccione un médico</option>
+                    <option th:each="medico : ${medicos}"
+                            th:value="${medico.id}"
+                            th:text="${medico.nombre + ' - ' + medico.especialidad}">
+                    </option>
+                </select>
+
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" th:value="${disponibilidad.fecha}" required>
+
+                <label for="horaInicio">Hora inicio</label>
+                <input type="time" id="horaInicio" name="horaInicio" th:value="${disponibilidad.horaInicio}" required>
+
+                <label for="horaFin">Hora fin</label>
+                <input type="time" id="horaFin" name="horaFin" th:value="${disponibilidad.horaFin}" required>
+
+                <button type="submit">Guardar</button>
+            </form>
+
+            <form th:if="${disponibilidad.id != null}"
+                    th:action="@{/disponibilidades/editar/{id}(id=${disponibilidad.id})}"
+                    method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <label>Médico</label>
+                <p class="dato"
+                        th:text="${disponibilidad.medico.nombre + ' - ' + disponibilidad.medico.especialidad}">
+                </p>
+
+                <label for="fechaEditar">Fecha</label>
+                <input type="date" id="fechaEditar" name="fecha" th:value="${disponibilidad.fecha}" required>
+
+                <label for="horaInicioEditar">Hora inicio</label>
+                <input type="time" id="horaInicioEditar" name="horaInicio" th:value="${disponibilidad.horaInicio}" required>
+
+                <label for="horaFinEditar">Hora fin</label>
+                <input type="time" id="horaFinEditar" name="horaFin" th:value="${disponibilidad.horaFin}" required>
+
+                <button type="submit">Guardar</button>
+            </form>
+
+            <div class="links">
+                <a th:href="@{/disponibilidades}">Volver a disponibilidades</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
