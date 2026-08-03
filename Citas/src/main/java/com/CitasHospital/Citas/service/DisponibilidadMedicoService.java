@@ -1,10 +1,12 @@
 package com.CitasHospital.Citas.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.CitasHospital.Citas.model.DisponibilidadMedico;
 import com.CitasHospital.Citas.model.Medico;
@@ -39,6 +41,7 @@ public class DisponibilidadMedicoService {
                 .orElseThrow(() -> new IllegalArgumentException("No se encontro la disponibilidad."));
     }
 
+    @Transactional
     public DisponibilidadMedico crearDisponibilidad(Long medicoId, LocalDate fecha, LocalTime horaInicio,
             LocalTime horaFin) {
         Medico medico = medicoRepository.findById(medicoId)
@@ -49,6 +52,16 @@ public class DisponibilidadMedicoService {
         }
 
         validarHorario(fecha, horaInicio, horaFin);
+        validarHorarioFuturo(fecha, horaInicio);
+
+        if (disponibilidadMedicoRepository
+                .existsByMedicoIdAndFechaAndHoraInicioAndHoraFin(
+                        medicoId, fecha, horaInicio, horaFin)) {
+            throw new IllegalArgumentException(
+                    "El médico ya tiene una disponibilidad registrada en esa fecha y horario.");
+        }
+
+        validarSolapamiento(medicoId, fecha, horaInicio, horaFin, null);
 
         DisponibilidadMedico disponibilidad = new DisponibilidadMedico(medico, fecha, horaInicio, horaFin);
         disponibilidad.setOcupado(false);
@@ -56,11 +69,24 @@ public class DisponibilidadMedicoService {
         return disponibilidadMedicoRepository.save(disponibilidad);
     }
 
+    @Transactional
     public DisponibilidadMedico actualizarDisponibilidad(Long id, LocalDate fecha, LocalTime horaInicio,
             LocalTime horaFin) {
-        validarHorario(fecha, horaInicio, horaFin);
-
         DisponibilidadMedico disponibilidad = buscarPorId(id);
+        validarHorario(fecha, horaInicio, horaFin);
+        validarHorarioFuturo(fecha, horaInicio);
+
+        Long medicoId = disponibilidad.getMedico().getId();
+
+        if (disponibilidadMedicoRepository
+                .existsByMedicoIdAndFechaAndHoraInicioAndHoraFinAndIdNot(
+                        medicoId, fecha, horaInicio, horaFin, id)) {
+            throw new IllegalArgumentException(
+                    "El médico ya tiene una disponibilidad registrada en esa fecha y horario.");
+        }
+
+        validarSolapamiento(medicoId, fecha, horaInicio, horaFin, id);
+
         disponibilidad.setFecha(fecha);
         disponibilidad.setHoraInicio(horaInicio);
         disponibilidad.setHoraFin(horaFin);
@@ -97,6 +123,30 @@ public class DisponibilidadMedicoService {
 
         if (!horaFin.isAfter(horaInicio)) {
             throw new IllegalArgumentException("La hora final debe ser despues de la hora inicial.");
+        }
+    }
+
+    private void validarHorarioFuturo(LocalDate fecha, LocalTime horaInicio) {
+        LocalDateTime inicioDisponibilidad = LocalDateTime.of(fecha, horaInicio);
+
+        if (!inicioDisponibilidad.isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException(
+                    "La disponibilidad debe registrarse en una fecha y hora futura.");
+        }
+    }
+
+    private void validarSolapamiento(Long medicoId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin,
+            Long idExcluir) {
+        boolean existeSolapamiento = disponibilidadMedicoRepository.findByMedicoIdAndFecha(medicoId, fecha)
+                .stream()
+                .filter(disponibilidad -> idExcluir == null || !idExcluir.equals(disponibilidad.getId()))
+                .anyMatch(disponibilidadExistente ->
+                        horaInicio.isBefore(disponibilidadExistente.getHoraFin())
+                                && horaFin.isAfter(disponibilidadExistente.getHoraInicio()));
+
+        if (existeSolapamiento) {
+            throw new IllegalArgumentException(
+                    "El médico ya tiene una disponibilidad que se cruza con ese horario.");
         }
     }
 }

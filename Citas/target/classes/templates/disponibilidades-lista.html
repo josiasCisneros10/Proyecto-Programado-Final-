@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad de médicos</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel panel-grande">
+            <h1>Disponibilidad de médicos</h1>
+
+            <p class="mensaje exito" th:if="${param.guardado}">Disponibilidad registrada correctamente.</p>
+            <p class="mensaje exito" th:if="${param.actualizado}">Disponibilidad actualizada correctamente.</p>
+            <p class="mensaje exito" th:if="${param.ocupado}">Disponibilidad marcada como ocupada.</p>
+            <p class="mensaje exito" th:if="${param.liberado}">Disponibilidad marcada como disponible.</p>
+            <p class="mensaje exito" th:if="${param.eliminado}">Disponibilidad eliminada correctamente.</p>
+
+            <div class="links">
+                <a th:href="@{/disponibilidades/nueva}" sec:authorize="hasRole('ADMIN')">Registrar disponibilidad</a>
+                <a th:href="@{/inicio}">Volver al inicio</a>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Médico</th>
+                            <th>Especialidad</th>
+                            <th>Fecha</th>
+                            <th>Hora inicio</th>
+                            <th>Hora fin</th>
+                            <th>Estado</th>
+                            <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="disponibilidad : ${disponibilidades}">
+                            <td th:text="${disponibilidad.medico.nombre}"></td>
+                            <td th:text="${disponibilidad.medico.especialidad}"></td>
+                            <td th:text="${disponibilidad.fecha}"></td>
+                            <td th:text="${disponibilidad.horaInicio}"></td>
+                            <td th:text="${disponibilidad.horaFin}"></td>
+                            <td th:text="${disponibilidad.ocupado ? 'Ocupado' : 'Disponible'}"></td>
+                            <td sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/disponibilidades/editar/{id}(id=${disponibilidad.id})}">Editar</a>
+                                <a th:if="${!disponibilidad.ocupado}" th:href="@{/disponibilidades/ocupar/{id}(id=${disponibilidad.id})}">Marcar ocupado</a>
+                                <a th:if="${disponibilidad.ocupado}" th:href="@{/disponibilidades/liberar/{id}(id=${disponibilidad.id})}">Marcar disponible</a>
+                                <a th:href="@{/disponibilidades/eliminar/{id}(id=${disponibilidad.id})}">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

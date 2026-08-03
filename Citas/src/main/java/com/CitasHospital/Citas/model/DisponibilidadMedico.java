@@ -3,25 +3,50 @@ package com.CitasHospital.Citas.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 // Horarios disponibles para cada medico
 @Entity
+@Table(
+    name = "disponibilidad_medico",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_disponibilidad_medico_horario",
+            columnNames = {
+                "medico_id",
+                "fecha",
+                "hora_inicio",
+                "hora_fin"
+            }
+        )
+    }
+)
 public class DisponibilidadMedico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
 
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
+
+    @Column(name = "hora_inicio", nullable = false)
     private LocalTime horaInicio;
+
+    @Column(name = "hora_fin", nullable = false)
     private LocalTime horaFin;
+
     private boolean ocupado = false;
 
     //Constructor
