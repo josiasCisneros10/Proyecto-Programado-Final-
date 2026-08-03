@@ -9,19 +9,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.CitasHospital.Citas.model.DisponibilidadMedico;
+import com.CitasHospital.Citas.model.EstadoCita;
 import com.CitasHospital.Citas.model.Medico;
+import com.CitasHospital.Citas.repository.CitaRepository;
 import com.CitasHospital.Citas.repository.DisponibilidadMedicoRepository;
 import com.CitasHospital.Citas.repository.MedicoRepository;
 
 @Service
 public class DisponibilidadMedicoService {
+    private static final List<EstadoCita> ESTADOS_ACTIVOS =
+            List.of(EstadoCita.PENDIENTE, EstadoCita.CONFIRMADA);
+
     private final DisponibilidadMedicoRepository disponibilidadMedicoRepository;
     private final MedicoRepository medicoRepository;
+    private final CitaRepository citaRepository;
 
     public DisponibilidadMedicoService(DisponibilidadMedicoRepository disponibilidadMedicoRepository,
-            MedicoRepository medicoRepository) {
+            MedicoRepository medicoRepository, CitaRepository citaRepository) {
         this.disponibilidadMedicoRepository = disponibilidadMedicoRepository;
         this.medicoRepository = medicoRepository;
+        this.citaRepository = citaRepository;
     }
 
     public List<DisponibilidadMedico> listarDisponibilidades() {
@@ -73,6 +80,11 @@ public class DisponibilidadMedicoService {
     public DisponibilidadMedico actualizarDisponibilidad(Long id, LocalDate fecha, LocalTime horaInicio,
             LocalTime horaFin) {
         DisponibilidadMedico disponibilidad = buscarPorId(id);
+
+        if (citaRepository.existsByDisponibilidadIdAndEstadoIn(id, ESTADOS_ACTIVOS)) {
+            throw new IllegalArgumentException("No se puede editar una disponibilidad con una cita activa.");
+        }
+
         validarHorario(fecha, horaInicio, horaFin);
         validarHorarioFuturo(fecha, horaInicio);
 
@@ -100,14 +112,25 @@ public class DisponibilidadMedicoService {
         disponibilidadMedicoRepository.save(disponibilidad);
     }
 
+    @Transactional
     public void marcarComoDisponible(Long id) {
+        if (citaRepository.existsByDisponibilidadIdAndEstadoIn(id, ESTADOS_ACTIVOS)) {
+            throw new IllegalArgumentException("No se puede liberar una disponibilidad con una cita activa.");
+        }
+
         DisponibilidadMedico disponibilidad = buscarPorId(id);
         disponibilidad.setOcupado(false);
         disponibilidadMedicoRepository.save(disponibilidad);
     }
 
+    @Transactional
     public void eliminarDisponibilidad(Long id) {
         DisponibilidadMedico disponibilidad = buscarPorId(id);
+
+        if (citaRepository.existsByDisponibilidadId(id)) {
+            throw new IllegalArgumentException("No se puede eliminar una disponibilidad con citas asociadas.");
+        }
+
         disponibilidadMedicoRepository.delete(disponibilidad);
     }
 
