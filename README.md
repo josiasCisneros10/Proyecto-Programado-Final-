@@ -2,160 +2,124 @@
 
 ## Descripción
 
-Aplicación web desarrollada con Spring Boot para gestionar la autenticación, usuarios, médicos, disponibilidades médicas, reservas de citas, historial y administración de citas de un hospital.
+Este proyecto es un sistema web desarrollado con Spring Boot para gestionar usuarios, médicos, disponibilidades horarias y citas médicas dentro de un hospital.
 
-El Avance II integra la Gestión de Citas con los módulos del Avance I, de manera que los usuarios pueden reservar espacios disponibles y los administradores pueden gestionar y dar seguimiento a las citas.
+El Avance I implementa la autenticación, los roles, la gestión de usuarios, médicos y disponibilidades. El Avance II incorpora la reserva, consulta, confirmación y cancelación de citas, integrando estos procesos con los módulos anteriores.
 
 ## Módulos implementados
 
-### Autenticación y usuarios
-
-- Registro de usuarios.
-- Inicio y cierre de sesión.
+- Registro e inicio de sesión.
 - Recuperación de contraseña.
-- Roles ADMIN y USUARIO.
-- Actualización de perfil.
-- Gestión y desactivación lógica de usuarios.
-- Contraseñas protegidas con BCrypt.
+- Gestión de pacientes y usuarios.
+- Gestión de médicos y especialidades.
+- Gestión de disponibilidades horarias.
+- Reserva y cancelación de citas.
+- Historial de citas del usuario.
+- Administración y filtrado de citas.
+- Seguridad con roles `USUARIO` y `ADMIN`.
 
-### Gestión de médicos y disponibilidades
+## Gestión de citas
 
-- Creación y edición de médicos.
-- Registro de especialidades.
-- Creación y edición de disponibilidades.
-- Prevención de disponibilidades duplicadas.
-- Prevención de horarios solapados para un mismo médico.
-- Rechazo de horarios pasados.
-- Visualización del estado de una disponibilidad como ocupada o disponible.
+Los usuarios autenticados pueden consultar los espacios médicos disponibles, reservar una cita, revisar su historial y cancelar sus propias citas antes de la fecha y hora programadas.
 
-Los horarios consecutivos sí son válidos. Por ejemplo:
+Toda cita nueva se registra inicialmente como `PENDIENTE`. El administrador puede confirmar las citas pendientes o cancelar cualquier cita del sistema. Cuando una cita se cancela, el espacio médico vuelve a quedar disponible, mientras que la cita permanece guardada en el historial con estado `CANCELADA`.
 
-```text
-08:00–09:00
-09:00–10:00
-```
+El sistema evita que una disponibilidad ocupada sea reservada nuevamente y que un mismo usuario mantenga citas activas en horarios que se cruzan.
 
-### Gestión de citas
+## Estados de una cita
 
-- Consulta de espacios futuros disponibles.
-- Reserva por parte del usuario autenticado.
-- Estado inicial PENDIENTE.
-- Confirmación por administrador.
-- Cancelación por usuario o administrador.
-- Historial completo de citas.
-- Conservación de citas canceladas.
-- Liberación inmediata del espacio al cancelar.
-- Rechazo de reservas en espacios ocupados.
-- Prevención de citas activas solapadas para un mismo usuario.
-- Bloqueo transaccional para evitar reservas simultáneas.
+- `PENDIENTE`: la cita fue reservada y está a la espera de confirmación.
+- `CONFIRMADA`: la cita fue aprobada por un administrador.
+- `CANCELADA`: la cita fue cancelada por el usuario o por un administrador.
 
-### Administración de citas
+Las transiciones permitidas son:
 
-El administrador puede consultar, confirmar y cancelar citas. También puede filtrar las citas por:
+- `PENDIENTE` a `CONFIRMADA`.
+- `PENDIENTE` a `CANCELADA`.
+- `CONFIRMADA` a `CANCELADA`.
+
+Una cita cancelada no puede volver a activarse.
+
+## Administración de citas
+
+El administrador puede visualizar todas las citas, confirmarlas, cancelarlas y filtrarlas por:
 
 - Estado.
 - Médico.
 - Especialidad.
 - Rango de fechas.
 
-## Estados de una cita
+## Gestión de disponibilidades
 
-Estados disponibles:
+Las disponibilidades representan los espacios de fecha y hora que un médico ofrece para recibir una cita.
 
-```text
-PENDIENTE
-CONFIRMADA
-CANCELADA
-```
-
-Transiciones permitidas:
-
-```text
-PENDIENTE -> CONFIRMADA
-PENDIENTE -> CANCELADA
-CONFIRMADA -> CANCELADA
-```
-
-Una cita cancelada no puede reactivarse.
+El sistema impide registrar disponibilidades duplicadas o con horarios que se crucen para un mismo médico. Al reservar una cita, la disponibilidad queda ocupada; al cancelarla, vuelve a quedar disponible.
 
 ## Tecnologías utilizadas
 
-- Java 26.
-- Spring Boot.
-- Spring Security.
-- Spring Data JPA.
-- Hibernate.
-- Thymeleaf.
-- H2 Database.
-- Maven.
-- HTML.
-- CSS.
-
-## Estructura principal
-
-- `config`: seguridad e inicialización de datos básicos.
-- `controller`: manejo de solicitudes web.
-- `model`: entidades y estados del sistema.
-- `repository`: persistencia y consultas JPA.
-- `service`: reglas de negocio y transacciones.
-- `templates`: vistas Thymeleaf.
-- `static`: estilos CSS.
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- Thymeleaf
+- H2 Database
+- Maven
+- HTML/CSS
 
 ## Requisitos para ejecutar
 
-- JDK 26 o una versión compatible con el `pom.xml`.
-- Windows PowerShell.
-- Maven Wrapper incluido en el proyecto.
+- Tener instalado JDK 26 o una versión compatible con la configurada en el proyecto.
+- Tener Maven instalado o utilizar el wrapper incluido en el proyecto.
+- Ejecutar el proyecto desde la carpeta raíz, donde se encuentra el archivo `pom.xml`.
 
-El proyecto Maven está dentro de:
+## Pasos de ejecución
+
+Opción 1: desde Visual Studio Code.
+
+1. Abrir el proyecto en Visual Studio Code.
+2. Buscar la clase principal:
 
 ```text
-Proyecto-Programado-Final-\Citas
+src/main/java/com/CitasHospital/Citas/CitasApplication.java
 ```
 
-## Ejecución
+3. Presionar el botón de ejecutar sobre la clase `CitasApplication`.
 
-Desde la raíz del repositorio:
+Opción 2: desde Windows PowerShell.
+
+Ubicarse en la carpeta raíz del proyecto y ejecutar:
 
 ```powershell
-cd .\Citas
-.\mvnw.cmd spring-boot:run
+.\mvnw spring-boot:run
 ```
 
-Si la terminal ya está dentro de `Citas`, no se debe ejecutar otra vez `cd .\Citas`; basta con:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-La aplicación se abre en:
+Luego abrir en el navegador:
 
 ```text
 http://localhost:8080/login
 ```
 
-Para detenerla:
+## Credenciales de prueba
 
-```text
-Ctrl + C
-```
-
-## Credenciales de administrador
-
-DataInitializer crea únicamente esta cuenta si no existe:
+Administrador:
 
 ```text
 Correo: admin@hospital.com
 Contraseña: admin123
 ```
 
-## Usuario regular
+Usuario normal:
 
-El usuario regular debe crearse manualmente desde la opción de registro. No existe un usuario normal inicializado automáticamente.
+```text
+Puede registrarse desde la opción "Registrarse" en la pantalla de login.
+```
+
+El sistema inicializa únicamente la cuenta administradora. Los usuarios regulares, médicos y disponibilidades se crean desde la aplicación.
 
 ## Base de datos H2
 
-Consola:
+La consola de H2 se puede abrir en:
 
 ```text
 http://localhost:8080/h2-console
@@ -166,69 +130,30 @@ Datos de conexión:
 ```text
 JDBC URL: jdbc:h2:mem:hospitaldb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 User Name: sa
-Password: vacía
+Password:
 ```
 
-H2 se ejecuta en memoria, por lo que los datos se pierden cuando se detiene la aplicación.
+La contraseña se deja vacía.
 
 ## Rutas principales
-
-Públicas:
 
 - `/login`
 - `/registro`
 - `/recuperar-password`
-
-Autenticadas:
-
 - `/inicio`
 - `/perfil`
+- `/usuarios`
 - `/medicos`
+- `/disponibilidades`
 - `/citas/disponibles`
 - `/citas/mis-citas`
-
-Administrativas:
-
-- `/usuarios`
-- `/disponibilidades`
 - `/admin/citas`
 
-## Flujo de demostración del Avance II
+## Notas importantes
 
-1. Iniciar como administrador.
-2. Crear un médico activo.
-3. Crear una o más disponibilidades futuras.
-4. Cerrar sesión.
-5. Registrar un usuario normal.
-6. Iniciar sesión como usuario.
-7. Reservar un espacio.
-8. Comprobar que la cita queda PENDIENTE.
-9. Comprobar que el espacio deja de estar disponible.
-10. Iniciar sesión como administrador.
-11. Filtrar o localizar la cita.
-12. Confirmar la cita.
-13. Cancelar la cita.
-14. Comprobar que permanece en el historial como CANCELADA.
-15. Comprobar que la disponibilidad vuelve a estar libre.
-
-## Reglas importantes
-
-- No se permiten disponibilidades duplicadas o solapadas para el mismo médico.
-- No se crean disponibilidades ni citas en horarios pasados.
-- Una disponibilidad representa un espacio indivisible.
-- Una cita siempre pertenece a un usuario, médico y disponibilidad.
-- El médico se obtiene desde la disponibilidad.
-- Una disponibilidad solo puede tener una cita activa.
-- El usuario no puede tener citas activas solapadas.
-- Las reservas utilizan transacciones y bloqueo pesimista.
-- Las citas canceladas no se eliminan.
-- Una disponibilidad con historial de citas no puede eliminarse físicamente.
-- Las reglas de negocio se encuentran en la capa `service`.
-
-## Notas
-
-- La base H2 es temporal.
-- Solo se inicializa el administrador.
-- Los médicos, usuarios regulares y disponibilidades se crean manualmente.
-- Los formularios de reserva, confirmación y cancelación utilizan POST y CSRF.
-- El proyecto mantiene arquitectura por capas.
+- Las contraseñas se guardan encriptadas con BCrypt.
+- Los usuarios y médicos se desactivan mediante borrado lógico.
+- Los usuarios regulares solo pueden consultar y gestionar sus propias citas.
+- El administrador puede gestionar usuarios, médicos, disponibilidades y todas las citas.
+- Las citas canceladas permanecen almacenadas como parte del historial.
+- La base de datos H2 se ejecuta en memoria, por lo que los datos se pierden al detener la aplicación.
