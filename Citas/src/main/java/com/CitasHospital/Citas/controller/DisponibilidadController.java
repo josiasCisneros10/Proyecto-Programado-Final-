@@ -91,18 +91,6 @@ public class DisponibilidadController {
         }
     }
 
-    @GetMapping("/disponibilidades/ocupar/{id}")
-    public String marcarOcupado(@PathVariable Long id) {
-        disponibilidadService.marcarComoOcupado(id);
-        return "redirect:/disponibilidades?ocupado";
-    }
-
-    @GetMapping("/disponibilidades/liberar/{id}")
-    public String marcarDisponible(@PathVariable Long id) {
-        disponibilidadService.marcarComoDisponible(id);
-        return "redirect:/disponibilidades?liberado";
-    }
-
     @GetMapping("/disponibilidades/eliminar/{id}")
     public String eliminarDisponibilidad(@PathVariable Long id) {
         disponibilidadService.eliminarDisponibilidad(id);

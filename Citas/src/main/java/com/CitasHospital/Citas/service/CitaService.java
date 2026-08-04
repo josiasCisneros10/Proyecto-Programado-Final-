@@ -1,5 +1,6 @@
 package com.CitasHospital.Citas.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,6 +41,28 @@ public class CitaService {
     @Transactional(readOnly = true)
     public List<Cita> listarTodas() {
         return citaRepository.findAllByOrderByFechaDescHoraInicioDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Cita> filtrarCitas(EstadoCita estado, Long medicoId, String especialidad, LocalDate fechaDesde,
+            LocalDate fechaHasta) {
+        if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
+            throw new IllegalArgumentException("El rango de fechas no es valido.");
+        }
+
+        return listarTodas()
+                .stream()
+                .filter(cita -> estado == null || cita.getEstado() == estado)
+                .filter(cita -> medicoId == null
+                        || (cita.getMedico() != null && cita.getMedico().getId().equals(medicoId)))
+                .filter(cita -> especialidad == null || especialidad.isBlank()
+                        || (cita.getMedico() != null
+                                && cita.getMedico().getEspecialidad() != null
+                                && cita.getMedico().getEspecialidad().toLowerCase()
+                                        .contains(especialidad.toLowerCase())))
+                .filter(cita -> fechaDesde == null || !cita.getFecha().isBefore(fechaDesde))
+                .filter(cita -> fechaHasta == null || !cita.getFecha().isAfter(fechaHasta))
+                .toList();
     }
 
     @Transactional(readOnly = true)

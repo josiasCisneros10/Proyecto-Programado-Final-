@@ -52,11 +52,11 @@ public class SecurityConfig {
                                 "/disponibilidades/nueva",
                                 "/disponibilidades/guardar",
                                 "/disponibilidades/editar/**",
-                                "/disponibilidades/ocupar/**",
-                                "/disponibilidades/liberar/**",
-                                "/disponibilidades/eliminar/**",
-                                "/admin/**")
+                                "/disponibilidades/eliminar/**")
                         .hasRole("ADMIN")
+                        .requestMatchers("/admin/citas/**").hasRole("ADMIN")
+                        .requestMatchers("/citas/**").hasAnyRole("USUARIO", "ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")

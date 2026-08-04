@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis citas</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel panel-muy-grande">
+            <h1>Mis citas</h1>
+
+            <p class="mensaje exito" th:if="${exito}" th:text="${exito}"></p>
+            <p class="mensaje error" th:if="${error}" th:text="${error}"></p>
+
+            <div class="links">
+                <a th:href="@{/citas/disponibles}">Reservar nueva cita</a>
+                <a th:href="@{/inicio}">Volver al inicio</a>
+            </div>
+
+            <p th:if="${#lists.isEmpty(citas)}">No tiene citas registradas.</p>
+
+            <div class="tabla-contenedor" th:if="${!#lists.isEmpty(citas)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Médico</th>
+                            <th>Especialidad</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cita : ${citas}">
+                            <td th:text="${cita.medico.nombre}"></td>
+                            <td th:text="${cita.medico.especialidad}"></td>
+                            <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <span th:text="${#temporals.format(cita.horaInicio, 'HH:mm')}"></span>
+                                -
+                                <span th:text="${#temporals.format(cita.horaFin, 'HH:mm')}"></span>
+                            </td>
+                            <td>
+                                <span class="estado"
+                                      th:classappend="${cita.estado.name() == 'PENDIENTE' ? ' estado-pendiente' : (cita.estado.name() == 'CONFIRMADA' ? ' estado-confirmada' : ' estado-cancelada')}"
+                                      th:text="${cita.estado}"></span>
+                            </td>
+                            <td>
+                                <form class="form-inline" method="post"
+                                      th:if="${cita.futura and (cita.estado.name() == 'PENDIENTE' or cita.estado.name() == 'CONFIRMADA')}"
+                                      th:action="@{/citas/cancelar/{id}(id=${cita.id})}">
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}">
+                                    <button type="submit" class="boton-peligro">Cancelar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

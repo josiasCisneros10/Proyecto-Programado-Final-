@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "cita")
@@ -143,5 +144,11 @@ public class Cita {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    @Transient
+    public boolean isFutura() {
+        return LocalDateTime.of(fecha, horaInicio)
+                .isAfter(LocalDateTime.now());
     }
 }

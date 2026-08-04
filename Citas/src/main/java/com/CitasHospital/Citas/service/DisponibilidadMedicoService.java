@@ -3,6 +3,7 @@ package com.CitasHospital.Citas.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -41,6 +42,23 @@ public class DisponibilidadMedicoService {
 
     public List<DisponibilidadMedico> listarDisponibles() {
         return disponibilidadMedicoRepository.findByOcupadoFalse();
+    }
+
+    public List<DisponibilidadMedico> listarDisponiblesFuturas() {
+        LocalDateTime ahora = LocalDateTime.now();
+
+        return disponibilidadMedicoRepository.findByOcupadoFalse()
+                .stream()
+                .filter(disponibilidad -> disponibilidad.getMedico() != null)
+                .filter(disponibilidad -> disponibilidad.getMedico().isActivo())
+                .filter(disponibilidad -> LocalDateTime.of(
+                        disponibilidad.getFecha(),
+                        disponibilidad.getHoraInicio()).isAfter(ahora))
+                .sorted(Comparator.comparing(DisponibilidadMedico::getFecha)
+                        .thenComparing(DisponibilidadMedico::getHoraInicio)
+                        .thenComparing(disponibilidad -> disponibilidad.getMedico().getNombre(),
+                                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+                .toList();
     }
 
     public DisponibilidadMedico buscarPorId(Long id) {

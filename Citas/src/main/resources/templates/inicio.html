@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +15,11 @@
             <nav class="menu">
                 <a th:href="@{/perfil}">Perfil</a>
                 <a th:href="@{/medicos}">Médicos</a>
-                <a th:href="@{/disponibilidades}">Disponibilidades</a>
-                <a th:href="@{/usuarios}">Usuarios</a>
+                <a th:href="@{/citas/disponibles}">Espacios para reservar</a>
+                <a th:href="@{/citas/mis-citas}">Mis citas</a>
+                <a th:href="@{/admin/citas}" sec:authorize="hasRole('ADMIN')">Administración de citas</a>
+                <a th:href="@{/usuarios}" sec:authorize="hasRole('ADMIN')">Usuarios</a>
+                <a th:href="@{/disponibilidades}" sec:authorize="hasRole('ADMIN')">Gestión de disponibilidades</a>
             </nav>
 
             <form th:action="@{/logout}" method="post" class="form-salida">

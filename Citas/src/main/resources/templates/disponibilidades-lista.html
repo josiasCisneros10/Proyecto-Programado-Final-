@@ -13,8 +13,6 @@
 
             <p class="mensaje exito" th:if="${param.guardado}">Disponibilidad registrada correctamente.</p>
             <p class="mensaje exito" th:if="${param.actualizado}">Disponibilidad actualizada correctamente.</p>
-            <p class="mensaje exito" th:if="${param.ocupado}">Disponibilidad marcada como ocupada.</p>
-            <p class="mensaje exito" th:if="${param.liberado}">Disponibilidad marcada como disponible.</p>
             <p class="mensaje exito" th:if="${param.eliminado}">Disponibilidad eliminada correctamente.</p>
 
             <div class="links">
@@ -45,8 +43,6 @@
                             <td th:text="${disponibilidad.ocupado ? 'Ocupado' : 'Disponible'}"></td>
                             <td sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/disponibilidades/editar/{id}(id=${disponibilidad.id})}">Editar</a>
-                                <a th:if="${!disponibilidad.ocupado}" th:href="@{/disponibilidades/ocupar/{id}(id=${disponibilidad.id})}">Marcar ocupado</a>
-                                <a th:if="${disponibilidad.ocupado}" th:href="@{/disponibilidades/liberar/{id}(id=${disponibilidad.id})}">Marcar disponible</a>
                                 <a th:href="@{/disponibilidades/eliminar/{id}(id=${disponibilidad.id})}">Eliminar</a>
                             </td>
                         </tr>
