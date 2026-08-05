@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Médico</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel">
+            <h1 th:text="${titulo}">Médico</h1>
+
+            <p class="mensaje error" th:if="${error}" th:text="${error}"></p>
+
+            <form th:action="${medico.id == null} ? @{/medicos/guardar} : @{/medicos/editar/{id}(id=${medico.id})}"
+                    method="post"
+                    th:object="${medico}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" th:field="*{nombre}" required>
+
+                <label for="especialidad">Especialidad</label>
+                <input type="text" id="especialidad" th:field="*{especialidad}" required>
+
+                <button type="submit">Guardar</button>
+            </form>
+
+            <div class="links">
+                <a th:href="@{/medicos}">Volver a médicos</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -108,7 +108,7 @@ public class CitaService {
             throw new IllegalArgumentException("El espacio seleccionado ya no esta disponible.");
         }
 
-        validarSolapamientoUsuario(usuario.getId(), disponibilidad);
+        validarCruceHorario(usuario.getId(), disponibilidad);
 
         Cita cita = new Cita(usuario, medico, disponibilidad, disponibilidad.getFecha(),
                 disponibilidad.getHoraInicio(), disponibilidad.getHoraFin(), EstadoCita.PENDIENTE);
@@ -200,15 +200,15 @@ public class CitaService {
         }
     }
 
-    private void validarSolapamientoUsuario(Long usuarioId, DisponibilidadMedico disponibilidad) {
-        boolean existeSolapamiento = citaRepository.findByUsuarioIdAndEstadoIn(usuarioId, ESTADOS_ACTIVOS)
+    private void validarCruceHorario(Long usuarioId, DisponibilidadMedico disponibilidad) {
+        boolean existeCruceHorario = citaRepository.findByUsuarioIdAndEstadoIn(usuarioId, ESTADOS_ACTIVOS)
                 .stream()
                 .filter(citaExistente -> citaExistente.getFecha().equals(disponibilidad.getFecha()))
                 .anyMatch(citaExistente ->
                         disponibilidad.getHoraInicio().isBefore(citaExistente.getHoraFin())
                                 && disponibilidad.getHoraFin().isAfter(citaExistente.getHoraInicio()));
 
-        if (existeSolapamiento) {
+        if (existeCruceHorario) {
             throw new IllegalArgumentException("El usuario ya tiene otra cita activa en ese horario.");
         }
     }

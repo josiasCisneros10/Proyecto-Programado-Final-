@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espacios disponibles</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel panel-muy-grande">
+            <h1>Espacios disponibles</h1>
+
+            <p class="mensaje exito" th:if="${exito}" th:text="${exito}"></p>
+            <p class="mensaje error" th:if="${error}" th:text="${error}"></p>
+
+            <div class="links">
+                <a th:href="@{/citas/mis-citas}">Mis citas</a>
+                <a th:href="@{/inicio}">Volver al inicio</a>
+            </div>
+
+            <p th:if="${#lists.isEmpty(disponibilidades)}">
+                No existen espacios futuros disponibles en este momento.
+            </p>
+
+            <div class="tabla-contenedor" th:if="${!#lists.isEmpty(disponibilidades)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Médico</th>
+                            <th>Especialidad</th>
+                            <th>Fecha</th>
+                            <th>Hora de inicio</th>
+                            <th>Hora final</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="disponibilidad : ${disponibilidades}">
+                            <td th:text="${disponibilidad.medico.nombre}"></td>
+                            <td th:text="${disponibilidad.medico.especialidad}"></td>
+                            <td th:text="${#temporals.format(disponibilidad.fecha, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(disponibilidad.horaInicio, 'HH:mm')}"></td>
+                            <td th:text="${#temporals.format(disponibilidad.horaFin, 'HH:mm')}"></td>
+                            <td>
+                                <form class="form-inline" method="post"
+                                      th:action="@{/citas/reservar/{id}(id=${disponibilidad.id})}">
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}">
+                                    <button type="submit">Reservar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

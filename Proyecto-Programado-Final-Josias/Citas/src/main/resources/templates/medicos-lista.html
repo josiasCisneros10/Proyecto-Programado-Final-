@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de médicos</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <section class="panel panel-grande">
+            <h1>Gestión de médicos</h1>
+
+            <p class="mensaje exito" th:if="${param.guardado}">Médico registrado correctamente.</p>
+            <p class="mensaje exito" th:if="${param.actualizado}">Médico actualizado correctamente.</p>
+            <p class="mensaje exito" th:if="${param.desactivado}">Médico desactivado correctamente.</p>
+
+            <div class="links">
+                <a th:href="@{/medicos/nuevo}" sec:authorize="hasRole('ADMIN')">Registrar médico</a>
+                <a th:href="@{/inicio}">Volver al inicio</a>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Especialidad</th>
+                            <th>Estado</th>
+                            <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="medico : ${medicos}">
+                            <td th:text="${medico.id}"></td>
+                            <td th:text="${medico.nombre}"></td>
+                            <td th:text="${medico.especialidad}"></td>
+                            <td th:text="${medico.activo ? 'Activo' : 'Inactivo'}"></td>
+                            <td sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/medicos/editar/{id}(id=${medico.id})}">Editar</a>
+                                <a th:if="${medico.activo}" th:href="@{/medicos/desactivar/{id}(id=${medico.id})}">Desactivar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

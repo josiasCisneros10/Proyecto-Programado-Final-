@@ -86,7 +86,7 @@ public class DisponibilidadMedicoService {
                     "El médico ya tiene una disponibilidad registrada en esa fecha y horario.");
         }
 
-        validarSolapamiento(medicoId, fecha, horaInicio, horaFin, null);
+        validarCruceHorario(medicoId, fecha, horaInicio, horaFin, null);
 
         DisponibilidadMedico disponibilidad = new DisponibilidadMedico(medico, fecha, horaInicio, horaFin);
         disponibilidad.setOcupado(false);
@@ -115,7 +115,7 @@ public class DisponibilidadMedicoService {
                     "El médico ya tiene una disponibilidad registrada en esa fecha y horario.");
         }
 
-        validarSolapamiento(medicoId, fecha, horaInicio, horaFin, id);
+        validarCruceHorario(medicoId, fecha, horaInicio, horaFin, id);
 
         disponibilidad.setFecha(fecha);
         disponibilidad.setHoraInicio(horaInicio);
@@ -176,16 +176,16 @@ public class DisponibilidadMedicoService {
         }
     }
 
-    private void validarSolapamiento(Long medicoId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin,
+    private void validarCruceHorario(Long medicoId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin,
             Long idExcluir) {
-        boolean existeSolapamiento = disponibilidadMedicoRepository.findByMedicoIdAndFecha(medicoId, fecha)
+        boolean existeCruceHorario = disponibilidadMedicoRepository.findByMedicoIdAndFecha(medicoId, fecha)
                 .stream()
                 .filter(disponibilidad -> idExcluir == null || !idExcluir.equals(disponibilidad.getId()))
                 .anyMatch(disponibilidadExistente ->
                         horaInicio.isBefore(disponibilidadExistente.getHoraFin())
                                 && horaFin.isAfter(disponibilidadExistente.getHoraInicio()));
 
-        if (existeSolapamiento) {
+        if (existeCruceHorario) {
             throw new IllegalArgumentException(
                     "El médico ya tiene una disponibilidad que se cruza con ese horario.");
         }

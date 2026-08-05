@@ -1,0 +1,277 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #eef2f6;
+    color: #1f2933;
+}
+
+.contenedor {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.panel {
+    width: 100%;
+    max-width: 430px;
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.panel-grande {
+    max-width: 720px;
+}
+
+.panel-muy-grande {
+    max-width: 1120px;
+}
+
+h1 {
+    margin: 0 0 20px;
+    color: #123047;
+    text-align: center;
+}
+
+h2 {
+    margin: 24px 0 12px;
+    font-size: 20px;
+    color: #123047;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5df;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #ffffff;
+}
+
+button {
+    margin-top: 8px;
+    padding: 11px;
+    border: 0;
+    border-radius: 6px;
+    background: #1769aa;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0f548c;
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+a {
+    color: #1769aa;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.mensaje {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+}
+
+.error {
+    background: #fde8e8;
+    color: #9b1c1c;
+}
+
+.exito {
+    background: #e6f4ea;
+    color: #1f6f3f;
+}
+
+.token {
+    padding: 10px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    word-break: break-all;
+    font-family: Consolas, monospace;
+}
+
+.bienvenida {
+    text-align: center;
+    font-size: 18px;
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.menu a {
+    padding: 12px;
+    border: 1px solid #cbd5df;
+    border-radius: 6px;
+    text-align: center;
+    background: #f8fafc;
+}
+
+.form-salida {
+    max-width: 220px;
+    margin: 0 auto;
+}
+
+.tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 18px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+th,
+td {
+    padding: 11px;
+    border-bottom: 1px solid #d9e2ec;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: #f1f5f9;
+    color: #123047;
+    font-size: 14px;
+}
+
+.acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.form-inline {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    gap: 8px;
+}
+
+.form-inline button {
+    margin-top: 0;
+    white-space: nowrap;
+}
+
+.boton-secundario {
+    display: inline-block;
+    padding: 11px;
+    border-radius: 6px;
+    background: #e5edf5;
+    color: #123047;
+}
+
+.boton-peligro {
+    background: #b42318;
+}
+
+.boton-peligro:hover {
+    background: #8f1d15;
+}
+
+.boton-confirmar {
+    background: #1f7a4d;
+}
+
+.boton-confirmar:hover {
+    background: #17613c;
+}
+
+.filtros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.estado {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.estado-pendiente {
+    background: #fff4cc;
+    color: #7a5300;
+}
+
+.estado-confirmada {
+    background: #dff6e8;
+    color: #1f6f3f;
+}
+
+.estado-cancelada {
+    background: #fde8e8;
+    color: #9b1c1c;
+}
+
+@media (max-width: 640px) {
+    .contenedor {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+
+    .links,
+    .acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-inline {
+        width: 100%;
+    }
+
+    .form-inline button,
+    .boton-secundario {
+        width: 100%;
+        text-align: center;
+    }
+}
